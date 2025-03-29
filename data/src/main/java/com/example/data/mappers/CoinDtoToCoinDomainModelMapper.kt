@@ -2,8 +2,9 @@ package com.example.data.mappers
 
 import com.example.data.models.CoinDto
 import com.example.domain.models.CoinDomainModel
+import javax.inject.Inject
 
-class CoinDtoToCoinDomainModelMapper {
+class CoinDtoToCoinDomainModelMapper @Inject constructor() {
     fun mapToDomain(coinDto: CoinDto): CoinDomainModel {
         return CoinDomainModel(
             id = coinDto.id,

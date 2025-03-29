@@ -32,6 +32,13 @@ object DataModule {
 
     @Provides
     @Singleton
+    fun provideHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .build()
+    }
+
+    @Provides
+    @Singleton
     fun provideCoinService(json: Json, httpClient: OkHttpClient): CoinService {
         return Retrofit.Builder()
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
