@@ -1,5 +1,6 @@
 package com.example.coin_application.ui.viewModel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,13 +19,16 @@ class CoinViewModel @Inject constructor(
      val coinListLiveData: MutableLiveData<List<CoinUiModel>> = MutableLiveData(listOf())
 
     init {
-        viewModelScope.launch { getCoin() }
+        getCoin()
     }
 
-    private fun getCoin() {
-        val coinDomainModelList = getCoinsUseCase.buildUseCase()
-        val coinUiModelList =
-            coinDomainModelToCoinUiModelMapper.mapToPresentation(coinDomainModelList)
-        coinListLiveData.postValue(coinUiModelList)
+    fun getCoin() {
+        viewModelScope.launch {
+            val coinDomainModelList = getCoinsUseCase.buildUseCase()
+            val coinUiModelList =
+                coinDomainModelToCoinUiModelMapper.mapToPresentation(coinDomainModelList)
+            Log.d("TESTING", "in view model: $coinUiModelList")
+            coinListLiveData.postValue(coinUiModelList)
+        }
     }
 }

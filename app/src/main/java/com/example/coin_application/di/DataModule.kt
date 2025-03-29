@@ -6,7 +6,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.serialization.json.Json
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -17,31 +16,25 @@ import javax.inject.Singleton
 import com.example.data.network.CoinService
 import com.example.data.repository.CoinRepositoryImpl
 import com.example.domain.repository.CoinRepository
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
     private const val BASE_URL = "https://api.coinpaprika.com/"
 
-    @Provides
-    @Singleton
-    fun provideJson(): Json {
-        return Json { ignoreUnknownKeys = true }
-    }
+//    @Provides
+//    @Singleton
+//    fun provideJson(): Json {
+//        return Json { ignoreUnknownKeys = true }
+//    }
 
     @Provides
     @Singleton
-    fun provideHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideCoinService(json: Json, httpClient: OkHttpClient): CoinService {
+    fun provideCoinService(): CoinService {
         return Retrofit.Builder()
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(GsonConverterFactory.create())
+//            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .baseUrl(BASE_URL)
             .build()
             .create(CoinService::class.java)

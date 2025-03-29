@@ -5,5 +5,5 @@ import retrofit2.http.GET
 
 interface CoinService {
     @GET("v1/coins")
-    fun getCoins(): List<CoinDto>
+    suspend fun getCoins(): List<CoinDto>
 }

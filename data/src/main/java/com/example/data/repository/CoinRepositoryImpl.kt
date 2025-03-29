@@ -15,29 +15,31 @@ class CoinRepositoryImpl @Inject constructor(
     private val coinService: CoinService
 ) : CoinRepository {
 
-    //        val mockCoin = CoinDto(
-//            name = "Bitcoin",
-//            symbol = "BTC",
-//            rank = 1,
-//            isNew = false,
-//            isActive = true,
-//            type = "Crypto"
-//        )
+    val mockCoin = CoinDomainModel(
+        id = "1",
+        name = "Bitcoin",
+        symbol = "BTC",
+        rank = 1,
+        isNew = false,
+        isActive = true,
+        type = "Crypto"
+    )
 
-    override fun getCoins(): List<CoinDomainModel> {
-
+    override suspend fun getCoins(): List<CoinDomainModel> {
         val coinDtoList = try {
             coinService.getCoins()
         } catch (e: HttpException) {
             Log.e("Repo implementation", "http exception: ", e)
+            Log.e("TESTING", "http exception: ", e)
             emptyList()
         } catch (e: RuntimeException) {
-            Log.e("Repo implementation", "io exception: ", e)
+            Log.e("TESTING", "io exception: ", e)
             emptyList()
         }
 
         return coinDtoList.map { coinDto ->
             movieDtoToCoinDomainModelMapper.mapToDomain(coinDto)
         }
+//        return listOf(mockCoin)
     }
 }
