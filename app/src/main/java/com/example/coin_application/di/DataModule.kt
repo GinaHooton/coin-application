@@ -1,5 +1,6 @@
 package com.example.coin_application.di
 
+import com.example.data.ErrorLoggerImpl
 import com.example.data.mappers.CoinDtoToCoinDomainModelMapper
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -15,6 +16,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 import com.example.data.network.CoinService
 import com.example.data.repository.CoinRepositoryImpl
+import com.example.domain.ErrorLogger
 import com.example.domain.repository.CoinRepository
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -23,18 +25,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 object DataModule {
     private const val BASE_URL = "https://api.coinpaprika.com/"
 
-//    @Provides
-//    @Singleton
-//    fun provideJson(): Json {
-//        return Json { ignoreUnknownKeys = true }
-//    }
-
     @Provides
     @Singleton
     fun provideCoinService(): CoinService {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-//            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .baseUrl(BASE_URL)
             .build()
             .create(CoinService::class.java)
@@ -42,10 +37,17 @@ object DataModule {
 
     @Provides
     @Singleton
+    fun provideLog(): ErrorLogger {
+        return ErrorLoggerImpl()
+    }
+
+    @Provides
+    @Singleton
     fun provideCoinRepository(
         coinDtoToCoinDomainModelMapper: CoinDtoToCoinDomainModelMapper,
         coinService: CoinService,
+        logger: ErrorLogger
     ): CoinRepository {
-        return CoinRepositoryImpl(coinDtoToCoinDomainModelMapper, coinService)
+        return CoinRepositoryImpl(coinDtoToCoinDomainModelMapper, coinService, logger)
     }
 }
