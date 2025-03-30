@@ -15,7 +15,10 @@ import androidx.compose.ui.res.stringResource
 import com.example.coin_application.R
 
 @Composable
-fun ErrorPage(modifier: Modifier = Modifier, retryEvent: () -> Unit = {}) {
+fun ErrorPage(
+    modifier: Modifier = Modifier, retryEvent: () -> Unit = {},
+    errorType: String = ""
+) {
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -27,6 +30,14 @@ fun ErrorPage(modifier: Modifier = Modifier, retryEvent: () -> Unit = {}) {
                 .padding(dimensionResource(R.dimen.default_padding))
                 .fillMaxWidth()
         )
+        if (errorType != "") {
+            Text(
+                text = "The error was caused by an $errorType",
+                modifier = Modifier
+                    .padding(dimensionResource(R.dimen.default_padding))
+                    .fillMaxWidth()
+            )
+        }
         Button(
             modifier = Modifier.padding(dimensionResource(R.dimen.default_padding)),
             onClick = retryEvent
