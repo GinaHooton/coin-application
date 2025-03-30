@@ -1,12 +1,10 @@
 package com.example.coin_application
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,11 +12,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.coin_application.ui.theme.CoinapplicationTheme
 import com.example.coin_application.ui.viewModel.CoinViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.compose.runtime.livedata.observeAsState
+import com.example.coin_application.ui.components.CoinPage
+import com.example.coin_application.ui.components.ErrorPage
+import com.example.coin_application.ui.components.LoadingPage
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -26,38 +29,30 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val viewModel: CoinViewModel by viewModels()
-        Log.d("TESTING", "onCreate: ${viewModel.coinListLiveData.value}")
         viewModel.getCoin()
-        Log.d("TESTING", "onCreate: ${viewModel.coinListLiveData.value}")
         setContent {
-//            CoinapplicationTheme {
+            val coinListState by viewModel.coinListLiveData.observeAsState(initial = null)
             Scaffold(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
             ) { innerPadding ->
-                Text(
-                    text = viewModel.coinListLiveData.value.toString(),
-                    modifier = Modifier.padding(innerPadding)
-                )
+                if (coinListState == null) {
+                    LoadingPage(
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
+                else if (coinListState!!.isEmpty()) {
+                    ErrorPage(
+                        modifier = Modifier.padding(innerPadding),
+                        retryEvent = { viewModel.getCoin() })
+                } else {
+                    CoinPage(
+                        modifier = Modifier.padding(innerPadding),
+                        coinListState = coinListState!!
+                    )
+                }
             }
         }
-//        }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CoinapplicationTheme {
-        Greeting("Android")
     }
 }
