@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">coin-application</string>
+    <string name="error_message">There was an error loading coins</string>
+    <string name="retry_button">Refresh</string>
+    <string name="loading_message">Loading...</string>
+    <string name="coin_list_heading">Coin list is below:</string>
 </resources>
